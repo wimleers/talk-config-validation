@@ -1,74 +1,217 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
+
   <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta charset="utf-8">
 
-    <title>TITLE</title>
+    <title>Configuration validation: Drupal's next leap?'</title>
 
-    <link rel="stylesheet" href="reveal.js/dist/reset.css" />
-    <link rel="stylesheet" href="reveal.js/dist/reveal.css" />
-    <link rel="stylesheet" href="reveal.js/dist/theme/solarized.css" id="theme" />
+    <meta name="description" content="TBD">
+    <meta name="author" content="Wim Leers">
 
-    <!-- Theme used for syntax highlighted code -->
-    <link
-      rel="stylesheet"
-      href="reveal.js/plugin/highlight/monokai.css"
-      id="highlight-theme"
-    />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="reveal.js/dist/theme/black.css" id="theme">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="reveal.js/plugin/highlight/monokai.css">
   </head>
+
   <body>
+
     <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
-        <section
-          data-markdown
-          data-separator="-----"
-          data-separator-vertical="---"
-        >
-          <textarea data-template>
-            # Title Page
-
-            ### Date
-
-            -----
-            
-            ---
-            
-            ---
-            
-            ---
-            
-            -----
-
-            ## made with
-
-            #### [reveal.js](https://github.com/hakimel/reveal.js)
-
-            #### [excalidraw](https://github.com/excalidraw/excalidraw)
-
-          </textarea>
+        <section id="intro" data-background="img/19bbg4cwuf7tyjpg.jpg" data-background-via="http://i.kinja-img.com/gawker-media/image/upload/s--w3wd0uOT--/19bbg4cwuf7tyjpg.jpg">
+          <h2>Config validation</h2>
+          <h3><em>Drupal's next leap?</em></h3>
+          <hr>
+          <div>
+            <p style="font-size: 70%">Wim Leers
+              <br><small style="vertical-align: baseline">Senior Principal Software Engineer
+                <br><img src="img/acquia.png" alt="Acquia logo" style="border:none;height:1em;background:none;margin:0;">'s Drupal Acceleration Team</small>
+            </p>
+          </div>
         </section>
+        <section>
+          <section id="history" style="font-size:90%">
+            <table>
+              <caption>A brief history of config in Drupal</caption>
+              <tr class="fragment"><th>era</th><th>storage</th><th><em>blobbiness</em></th><th></th></tr>
+              <tr class="fragment"><td>2004</td><td><code>variable</code> table</td><td>extremely</td><td>🙈</td></tr>
+              <tr class="fragment"><td>2012</td><td>YAML files</td><td>diffable</td><td>🤓𝍔</td></tr>
+              <tr class="fragment"><td><a href="https://www.drupal.org/node/1905120">2013</a></td><td>[…] + schema</td><td>introspectable</td><td>🤔💡</td></tr>
+              <tr class="fragment"><td><a href="https://www.drupal.org/node/2241059">2014</a></td><td><code>config</code> table + […]</td><td><em>unchanged</em></td><td>🏎️</td></tr>
+              <tr class="fragment"><td><a href="https://www.drupal.org/node/2870878">2017</a></td><td>[…] + […] + constraints</td><td><em>validatable</em></td><td>✅</td></tr>
+            </table>
+          </section>
+          <section id="history--trend">
+            <p>More structure ⇒ versionable (no more <a href="https://www.drupal.org/project/variable"><code>variable</code></a> module), translatable (no more <a href="https://www.drupal.org/project/i18n"><code>i18n</code></a> module) …</p>
+          </section>
+          <section id="history--caveat">
+            <p><code>type: uuid</code></p>
+            <div class="fragment">
+              <p>👆</p>
+              <p>the only validatable config</p>
+            </div>
+            <p class="fragment">😱</p>
+          </section>
+        </section>
+        <section>
+          <section id="config-schema-constraints">
+            <h4><code>type: uuid</code></h4>
+            <figure>
+              <pre><code class="language-yaml" style="width: max-content; margin: 0 auto; font-size: 120%"># A UUID.
+uuid:
+  type: string
+  label: 'UUID'
+  constraints:
+    Uuid: {}
+</code></pre>
+              <figcaption style="font-size: 50%"><code>core/config/schema/core.data_types.schema.yml</code></figcaption>
+            </figure>
+          </section>
+          <section id="config-schema-constraints--plugin">
+            <figure>
+              <figcaption style="font-size: 70%;">
+                "<code>Uuid</code>" 👈 a <code>@Constraint</code> plugin ID
+              </figcaption>
+              <pre><code class="language-php" style="line-height: 110%; font-size: 90%">/**
+ * Validates a UUID.
+ *
+ * @Constraint(
+ *   id = "Uuid",
+ *   label = @Translation("Universally Unique Identifier", context = "Validation"),
+ * )
+ */
+class UuidConstraint extends Uuid {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validatedBy() {
+    return UuidValidator::class;
+  }
+
+}
+</code></pre>
+            </figure>
+          </section>
+          <section id="config-schema-constraints--plugin-validator">
+            <figure>
+              <figcaption style="font-size: 70%;">
+                <code>validatedBy()</code> 👈 a <code>ConstraintValidatorInterface</code> class
+              </figcaption>
+              <pre><code class="language-php" style="line-height: 110%; font-size: 90%">namespace Symfony\Component\Validator\Constraints;
+
+class UuidValidator extends ConstraintValidator {
+
+    public function validate(mixed $value, Constraint $constraint) {
+        if (!$constraint instanceof Uuid) {
+            throw new UnexpectedTypeException($constraint, Uuid::class);
+        }
+        if (!\is_scalar($value) && !$value instanceof \Stringable) {
+            throw new UnexpectedValueException($value, 'string');
+        }
+        …
+    }
+
+}
+</code></pre>
+            </figure>
+          </section>
+          <section id="config-schema-constraints--before">
+            <h4>Before <code>type: uuid</code></h4>
+            <figure class="fragment">
+              <pre><code class="language-diff" style="width: max-content; margin: 0 auto; font-size: 120%">     uuid:
+-      type: string
+-      label: 'UUID'
++      type: uuid
+</code></pre>
+              <figcaption><em>Any</em> string 😳
+            </figure>
+          </section>
+          <section data-background-gradient="radial-gradient(#283b95, #17b2c3)">
+            <h2>🤔</h2>
+          </section>
+          <section data-background-gradient="radial-gradient(orange, red)">
+            <h2>🤯</h2>
+          </section>
+        </section>
+        <section>
+          <section id="data-types-shapes-semantics">
+            <p>data types vs shapes vs semantics</p>
+            <p>config schema provides all needed tools, but nothing leverages it</p>
+          </section>
+          <section id="config-types-vs-simple-config-and-config-entities">
+            <p>config types 🆚 simple config & config entities</p>
+            <p>complication: config entities that support plugins</p>
+          </section>
+        </section>
+        <section>
+          <section id="core-status">
+            <p>core status today</p>
+            <p>more types became validatable</p>
+            <p>… but still not a single 
+          </section>
+        </section>
+        <section>
+          <section id="contrib">
+            <p>start using in contrib today</p>
+            <p>CDN module — since 2020</p>
+            <p>base class in contrib module, or copy/paste</p>
+          </section>
+        </section>
+        <section>
+          <section id="tools">
+            <p>https://www.drupal.org/project/config_inspector</p>
+          </section>
+        </section>
+        <section>
+          <section id="future">
+            <p>challenges: partially validatable
+            <p>functionality opportunities: JS admin UI, JSON:API, recipes</p>
+            <p>operational opportunities: reliability (CI!), module maintainability</p>
+          </section>
+        </section>
+        <section>
+          <section id="HELP">
+            <p>help needed to complete this!</p>
+            <p>which config changes have caused outages for YOU?</p>
+          </section>
+        </section>
+
       </div>
+
     </div>
 
     <script src="reveal.js/dist/reveal.js"></script>
+    <script src="reveal.js/plugin/zoom/zoom.js"></script>
     <script src="reveal.js/plugin/notes/notes.js"></script>
+    <script src="reveal.js/plugin/search/search.js"></script>
     <script src="reveal.js/plugin/markdown/markdown.js"></script>
     <script src="reveal.js/plugin/highlight/highlight.js"></script>
-    <script src="reveal.js/plugin/zoom/zoom.js"></script>
     <script>
-      // More info about initialization & config:
-      // - https://revealjs.com/initialization/
-      // - https://revealjs.com/config/
+
+      // Also available as an ES module, see:
+      // https://revealjs.com/initialization/
       Reveal.initialize({
+        controls: true,
+        progress: true,
+        center: true,
         hash: true,
 
         // Learn about plugins: https://revealjs.com/plugins/
-        plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealZoom],
+        plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
       });
+
     </script>
+
   </body>
 </html>
