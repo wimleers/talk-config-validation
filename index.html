@@ -20,6 +20,16 @@
 
     <!-- Theme used for syntax highlighting of code -->
     <link rel="stylesheet" href="reveal.js/plugin/highlight/monokai.css">
+    <style>
+      @keyframes loading {
+        0 {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      </style>
   </head>
 
   <body>
@@ -145,6 +155,25 @@ class UuidValidator extends ConstraintValidator {
           </section>
         </section>
         <section>
+          <section id="types-of-types" style="font-size:90%;">
+            <table style="margin: 0;">
+              <tr class="fragment"><th style="border-bottom: none; text-align: center">Data</th><th colspan="3" style="text-align: center">Types</th></tr>
+              <tr class="fragment"><th></th><th>Config</th><th>Storage</th><th>Perceived</th><th></th></tr>
+              <tr class="fragment"><td><small><code>'f962b8c7-
+4c74-4100-
+b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string</code></td><td>UUID</td><td>👍</td></tr>
+              <tr class="fragment"><div style="position: absolute; transform:rotate(0.75turn); font-size: 40%; top:20em; left: -6em;"><p><code>media.settings</code></p></div><td><small><code>'https://oembed.com/
+                providers.json'</code></small></td><td>uri</td><td><code>string</code></td><td>URL</td><td>👍</td></tr>
+              <tr class="fragment"><td><small><code>''</code></small></td><td>uri</td><td><code>string</code></td><td style="animation: loading 2.5s linear infinite;">🤪</td><td>🙈</td></tr>
+              <tr class="fragment"><th></dt><th style="writing-mode: sideways-lr;"><em style="writing-mode: sideways-lr;">theoretical</em></th><th></th><th><em>practical</th><th></th></tr>
+              <tr class="fragment"><th></dt><th><em>intent</em></th><th><em>shape</em></th><th><em>semantics</th><th></th></tr>
+            </table>
+          </section>
+          <section data-background-gradient="radial-gradient(yellow, orange)" style="text-shadow: -1px 1px 2px #23430C">
+            <h3>The new blobbiness</h3>
+            <p>🫠</p>
+            <p>Mismatch between config type and data it stores or accepts.</p>
+          </section>
           <section id="data-types-shapes-semantics">
             <p>data types vs shapes vs semantics</p>
             <p>config schema provides all needed tools, but nothing leverages it</p>
