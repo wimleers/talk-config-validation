@@ -29,6 +29,23 @@
           transform: rotate(360deg);
         }
       }
+      @keyframes growingshrinking {
+        from {
+            transform: scale(1);
+        }
+        to {
+            transform: scale(3);
+        }
+      }
+      .bad {
+        color: #ff2c2d;
+      }
+      .fragment.blur {
+        filter: blur(5px);
+      }
+      .fragment.blur.visible {
+        filter: none;
+      }
       </style>
   </head>
 
@@ -162,35 +179,114 @@ class UuidValidator extends ConstraintValidator {
               <tr class="fragment"><td><small><code>'f962b8c7-
 4c74-4100-
 b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string</code></td><td>UUID</td><td>👍</td></tr>
-              <tr class="fragment"><div style="position: absolute; transform:rotate(0.75turn); font-size: 40%; top:20em; left: -6em;"><p><code>media.settings</code></p></div><td><small><code>'https://oembed.com/
+              <tr class="fragment" ><div style="position: absolute; transform:rotate(0.75turn); font-size: 40%; top:16em; left: -6em;"><p><code>media.settings</code></p></div><td><small><code>'https://oembed.com/
                 providers.json'</code></small></td><td>uri</td><td><code>string</code></td><td>URL</td><td>👍</td></tr>
               <tr class="fragment"><td><small><code>''</code></small></td><td>uri</td><td><code>string</code></td><td style="animation: loading 2.5s linear infinite;">🤪</td><td>🙈</td></tr>
-              <tr class="fragment"><th></dt><th style="writing-mode: sideways-lr;"><em style="writing-mode: sideways-lr;">theoretical</em></th><th></th><th><em>practical</th><th></th></tr>
-              <tr class="fragment"><th></dt><th><em>intent</em></th><th><em>shape</em></th><th><em>semantics</th><th></th></tr>
+              <tr class="fragment"><th></th><th><em>intent</em></th><th><em>shape</em></th><th><em>semantics</th><th></th></tr>
+            </table>
+            <aside class="notes">
+              The theoretical implications of choosing a particular type that we really want for practical reasons (assuming some input contains some kind of data) is unfortunately completely missing in practice, making the usefuless theoretical 🙃
+            </aside>
+          </section>
+          <section>
+            <p>Validators needed! 🙏</p>
+          </section>
+          <section>
+            <p>It gets worse.</p>
+          </section>
+          <section id="types-of-types-worse" style="font-size:90%;">
+            <table style="margin: 0;">
+              <tr class=""><th style="border-bottom: none; text-align: center">Data</th><th colspan="3" style="text-align: center">Types</th></tr>
+              <tr class=""><th></th><th>Config</th><th>Storage</th><th>Perceived</th><th></th></tr>
+              <tr class=""><td><small><code>'f962b8c7-
+4c74-4100-
+b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string</code></td><td>UUID</td><td>👍</td></tr>
+              <tr class=""><div style="position: absolute; transform:rotate(0.75turn); font-size: 40%; top:16em; left: -6em;"><p><code>media.settings</code></p></div><td><small><code>'https://oembed.com/
+                providers.json'</code></small></td><td>uri</td><td><code>string</code></td><td>URL</td><td>👍</td></tr>
+              <tr class="fra"><td><small><code>''</code></small></td><td>uri</td><td><code>string</code></td><td>🤪</td><td>🙈</td></tr>
+              <tr class="fragment"><td><small><code>'first-uuid'</code></small></td><td><code>uuid</code></td><td><code>string</code></td><td>🤪</td><td class="fragment grow" style="animation: growingshrinking 2.5s linear infinite; animation-direction: alternate-reverse">😱</td></tr>
             </table>
           </section>
+          <section>
+            <p>Validators are not executed today.</p>
+          </section>
+          <section id="types-this-aint-fine" data-background-video="img/thisisfine.mp4"></section>
           <section data-background-gradient="radial-gradient(yellow, orange)" style="text-shadow: -1px 1px 2px #23430C">
             <h3>The new blobbiness</h3>
             <p>🫠</p>
-            <p>Mismatch between config type and data it stores or accepts.</p>
-          </section>
-          <section id="data-types-shapes-semantics">
-            <p>data types vs shapes vs semantics</p>
-            <p>config schema provides all needed tools, but nothing leverages it</p>
-          </section>
-          <section id="config-types-vs-simple-config-and-config-entities">
-            <p>config types 🆚 simple config & config entities</p>
-            <p>complication: config entities that support plugins</p>
+            <ul>
+              <li>Many validators missing.
+              <li>Validators not executed.
+            </ul>
           </section>
         </section>
+      </section>
+      <section>
+        <section id="status-core">
+          <h3>Drupal Core</h3>
+        </section>
+        <section id="status-core--ugly">
+          <h3>Core: ugly</h3>
+          <p class="fragment custom blur"><span class="bad">&gt;95%</span> of config types not validatable</p>
+          <small><p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3324984">#3324984</a> adds a test that reports this %.</p></small>
+        </section>
+        <section id="status-core--bad">
+          <h3>Core: bad</h3>
+          <p>Every test checks schema …</p>
+          <p class="fragment custom blur">… but <span class="bad">does not validate!</span></p>
+          <small><p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3361534">#3361534</a> calls <code>::validate()</code> when <code>::$strictConfigSchema = TRUE</code></p></small>
+        </section>
+        <section id="status-core--good-one">
+          <h3>Good</h3>
+          <p>More config validatable!</p>
+          <ul>
+            <div class="fragment custom blur">
+              <li><code>type: config_dependencies</code>
+              <li><code>block.block.*:plugin</code>
+            </div>
+            <div class="fragment custom blur">
+              <li><a href="https://www.drupal.org/project/drupal/issues/2920678">#2920678</a> 👉 <code>type: machine_name</code>
+              <li><a href="https://www.drupal.org/project/drupal/issues/3341682">#3341682</a> 👉 <code>type: label</code>
+            </div>
+          </ul>
+        </section>
+        <section id="status-core--good-two">
+          <h3>Good</h3>
+          <p>More validation constraints to reuse!</p>
+          <ul>
+            <li class="fragment custom blur"><code>ValidKeys: &lt;infer&gt;</code>
+            <li class="fragment custom blur"><code>PluginExists: plugin.manager.block</code>
+            <li class="fragment custom blur"><code>ExtensionName: []</code>
+            <li class="fragment custom blur"><code>ExtensionExists: module</code>
+            <li class="fragment custom blur"><code>ConfigExists: []</code>
+            <li class="fragment custom blur"><code>RequiredConfigDependencies: ['filter_format']</code>
+          </ul>
+        </section>
+        <section id="status-core--interested">
+          <h3>Interested?</h3>
+          <p>Issue tags:</p>
+          <ul>
+            <li><a href="https://www.drupal.org/project/issues/search?issue_tags=Configuration%20schema"><q>Configuration schema</q></a>
+            <li><a href="https://www.drupal.org/project/issues/search?issue_tags=validation"><q>validation</q></a>
+          </ul>
+        </section>
+      </section>
+      <section>
         <section>
-          <section id="core-status">
-            <p>core status today</p>
-            <p>more types became validatable</p>
-            <p>… but still not a single 
+          <section id="config_inspector">
+            <h3>Configuration Inspector</h3>
+            <a href="https://www.drupal.org/project/config_inspector">d.o/project/config_inspector</a>
           </section>
         </section>
+      </section>
+      <section>
         <section>
+          <section id="status-contrib">
+            <h3>Drupal Contrib</h3>
+          </section>
+          <section>
+            <p>You <em>can</em> start using it today!
+          </section>
           <section id="contrib">
             <p>start using in contrib today</p>
             <p>CDN module — since 2020</p>
