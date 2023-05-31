@@ -46,6 +46,18 @@
       .fragment.blur.visible {
         filter: none;
       }
+      ul.blockers {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      ul.blockers li {
+        padding-left: 1rem;
+        text-indent: -0.75rem;
+      }
+      ul.blockers li::before {
+        content: '🛑 ';
+      }
       </style>
   </head>
 
@@ -243,12 +255,16 @@ b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string
             <div class="fragment custom blur">
               <li><code>type: config_dependencies</code>
               <li><code>block.block.*:plugin</code>
+              <li>CKEditor 5 configuration + every plugin!
             </div>
             <div class="fragment custom blur">
               <li><a href="https://www.drupal.org/project/drupal/issues/2920678">#2920678</a> 👉 <code>type: machine_name</code>
               <li><a href="https://www.drupal.org/project/drupal/issues/3341682">#3341682</a> 👉 <code>type: label</code>
             </div>
           </ul>
+          <aside class="notes">
+            So what else besides <code>type: uuid</code> is supported?
+          </aside>
         </section>
         <section id="status-core--good-two">
           <h3>Good</h3>
@@ -272,11 +288,34 @@ b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string
         </section>
       </section>
       <section>
+        <section id="why" data-background-gradient="radial-gradient(grey, black)" style="text-shadow: -1px 1px 2px #23430C">
+          <h3>Why?</h3>
+          <p>🤷‍♀️</p>
+        </section>
+        <section id="why-blockers">
+          <ul class="blockers">
+            <li class="fragment custom blur">Writing configuration via JSON:API
+            <li class="fragment custom blur">Any admin UI improvements <span style="padding-left: 1em; font-size: 70%" class="fragment">🪦 JS Admin UI</span>
+            <li class="fragment custom blur">Reliable configuration management <span style="padding-left: 1em; font-size: 70%" class="fragment"><code>config_split</code>, <code>config_filter</code> … etc.</span>
+            <li class="fragment custom blur">Recipes Initiative
+            <li class="fragment custom blur">Ambitious site builder experiences
+          </ul>
+          <aside class="notes">
+            There are many capabilities blocked on this.
+
+            It's not just that this blocks writing configuration via JSON:API, which in turn blocked the JS Admin UI initiative which has since stopped. It's also that it is impossible to reuse the same validation logic for the JS admin UI: it literally needs to be re-implemented, which is a big security risk. If we move the current logic out of forms, we benefit multiple times: custom admin UIs (on the server or client) become possible, UIs become simpler to maintain, additional validation (from a contrib or custom module) becomes easy to add, et cetera.
+
+            Talking to Fabian Bircher, maintainer of https://www.drupal.org/project/config_split and https://www.drupal.org/project/config_filter, he said a key problem is to know if a key is required or not. Sometimes when a value is null or the array empty we can omit the key and sometimes not. These are problems that are easily solvable with validation.
+          </aside>
+        </section>
+      </section>
+      <section>
+        <section id="config_inspector">
+          <h3>Configuration Inspector</h3>
+          <a href="https://www.drupal.org/project/config_inspector">d.o/project/config_inspector</a>
+        </section>
         <section>
-          <section id="config_inspector">
-            <h3>Configuration Inspector</h3>
-            <a href="https://www.drupal.org/project/config_inspector">d.o/project/config_inspector</a>
-          </section>
+          <img src="img/config_inspector_drush.png"></img>
         </section>
       </section>
       <section>
