@@ -298,6 +298,7 @@ b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string
             <li class="fragment custom blur">Admin UI improvements <span style="padding-left: 1em; font-size: 70%" class="fragment">🪦 JS Admin UI</span>
             <li class="fragment custom blur">Reliable <span style="font-size: 90%"><code>config_split</code><span class="fragment">, <code>config_filter</code> …</span></span>
             <li class="fragment custom blur">Recipes Initiative
+            <li class="fragment custom blur">Automatic Updates Initiative
             <li class="fragment custom blur">Ambitious site builder experiences
           </ul>
           <aside class="notes">
@@ -443,7 +444,7 @@ class CdnSettingsForm extends ValidatableConfigFormBase {
           </li>
           </ol>
         </section>
-        <section data-auto-animate data-background="img/cdn_ui-config_validation-2018.png" data-background-size=contain></section>
+        <section data-auto-animate data-background="img/cdn_ui-config_validation-2018.png" data-background-size="contain"></section>
         <section data-auto-animate data-background="img/cdn-ui-config-validation-import.png" data-background-size=contain></section>
         <section>
           <h3>Examples</h3>
@@ -455,6 +456,131 @@ class CdnSettingsForm extends ValidatableConfigFormBase {
             <figcaption>👇<figcaption>
             <a href="http://grep.xnddx.ru/search?text=constraints&filename=.schema.yml"><img src="img/examples-url.gif"></a>
           </figure>
+        </section>
+      </section>
+      <section>
+        <section id="future-core">
+          <h3>How to use?</h3>
+          <h4 style="font-size: 200%" class="fragment custom blur">🪩</h4>
+        </section>
+        <section>
+          <p>Analyze your entire site</p>
+          <pre><code data-trim class="language-bash">drush config:inspect --format=csv > ~/Desktop/core.csv</code></pre>
+        </section>
+        <section data-background-video="img/find-next-target.mov" data-background-size=contain>
+        </section>
+        <section data-auto-animate>
+          <pre data-id="code-animation"><code data-trim class="language-text" style="font-size: 80%">
+$ drush config:inspect --filter-keys=user.settings --detail --list-constraints
+ Legend for Data:
+  ✅❓  → Correct primitive type, detailed validation impossible.
+  ✅✅  → Correct primitive type, passed all validation constraints.
+ ------------------------------------------ --------- ------------- ------ ---------------------------------
+  Key                                        Status    Validatable   Data   Validation constraints
+ ------------------------------------------ --------- ------------- ------ ---------------------------------
+  user.settings                              Correct   74%           ✅❓
+   user.settings:                            Correct   NOT           ✅❓
+   user.settings:_core                       Correct   NOT           ✅❓
+   user.settings:_core.default_config_hash   Correct   NOT           ✅❓
+   user.settings:anonymous                   Correct   NOT           ✅❓
+   user.settings:cancel_method               Correct   NOT           ✅❓
+   user.settings:langcode                    Correct   NOT           ✅❓
+   user.settings:notify                      Correct   NOT           ✅❓
+   user.settings:notify.cancel_confirm       Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
+   user.settings:notify.password_reset       Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
+…
+   user.settings:notify.status_activated     Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
+   user.settings:notify.status_blocked       Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
+   user.settings:notify.status_canceled      Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
+   user.settings:password_reset_timeout      Correct   NOT           ✅❓
+   user.settings:password_strength           Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
+   user.settings:register                    Correct   NOT           ✅❓
+   user.settings:verify_mail                 Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
+ ------------------------------------------ --------- ------------- ------ ------------------------
+          </code></pre>
+          <aside class="notes">
+            Using the <code>drush</code> command to list the constraints of all property paths inside <code>user.settings</code> gives us a nice overview of the property paths still missing validation. Some already have validation, but only by accident: because they're <code>type: boolean</code>. Let's start with the first: <code>user.settings:anonymous</code>.
+          </aside>
+        </section>
+        <section data-auto-animate>
+          <pre data-id="code-animation"><code class="language-yaml" data-trim style="font-size: 80%">
+  user.settings:
+    type: config_object
+    label: 'User settings'
+    mapping:
+      anonymous:
+        type: label
+        label: 'Name'
++       constraints:
++         NotBlank: []
++         Regex:
++           pattern: '/[[:alnum:][:space:]]+/'
++           message: 'Using only emojis is not allowed because it may not be supported in all contexts.'
+          </code></pre>
+          <p><code>user.schema.yml</code></p>
+          <aside class="notes">
+            Because there is no validation logic in the form (which implies that pretty much any value was allowed until now, or at least any value that the HTML form input would have allowed to pass through), we have to use common sense to determine what <em>are</em> acceptable values.
+
+            In this case, we know that pretty much anything goes, except for no input at all (which an <code><input type=text></code> maps to the empty string). So we use <code>NotBlank</code>. But is that enough?
+            Another reasonable requirement is to ensure that the name for the anonymous user works in all contexts. Not all contexts allow for the use of emojis. So, let's require the bare minimum: at least <em>some</em> of the characters must not be emojis, so that even after transliteration, there's something meaningful left.
+          </aside>
+        </section>
+        <section data-background="img/find-next-target-form-step1.png" data-background-size="contain">
+          <aside class="notes">
+            Next, let's find out which UI actually modifies this config. A quick search for <code>user.settings</code> reveals a LOT of matches. But … we know <code>ConfigFormBase</code> has a <code>getEditableConfigNames()</code> method. Let's use that to our advantage, and maybe this is a cool PHPStorm trick you didn't know yet! 🤓
+          </aside>
+        </section>
+        <section data-background="img/find-next-target-form-step2.png" data-background-size="contain">
+        </section>
+        <section data-auto-animate>
+          <pre data-id="code-animation"><code class="language-diff" data-trim style="font-size: 80%">
+-class AccountSettingsForm extends ConfigFormBase {
++class AccountSettingsForm extends ValidatableConfigFormBase {
+          </code></pre>
+        </section>
+        <section data-auto-animate>
+          <pre data-id="code-animation"><code class="language-diff" data-trim style="font-size: 80%">
+   public function submitForm(array &$form, FormStateInterface $form_state) {
+     parent::submitForm($form, $form_state);
+
+-    $this->config('user.settings')
+-      ->set('anonymous', $form_state->getValue('anonymous'))
+-      ->set('register', $form_state->getValue('user_register'))
+-      ->set('password_strength', $form_state->getValue('user_password_strength'))
+-      ->set('verify_mail', $form_state->getValue('user_email_verification'))
+-      ->set('cancel_method', $form_state->getValue('user_cancel_method'))
+-      ->set('notify.status_activated', $form_state->getValue('user_mail_status_activated_notify'))
+-      ->set('notify.status_blocked', $form_state->getValue('user_mail_status_blocked_notify'))
+-      ->set('notify.status_canceled', $form_state->getValue('user_mail_status_canceled_notify'))
+-      ->save();
+</code></pre>
+        </section>
+        <section data-auto-animate>
+          <pre data-id="code-animation"><code class="language-diff" data-trim style="font-size: 80%">
++  /**
++   * {@inheritdoc}
++   */
++  protected static function mapFormValuesToConfig(FormStateInterface $form_state, Config $config): Config {
++    switch ($config->getName()) {
++      case 'user.settings':
++        $config->set('anonymous', $form_state->getValue('anonymous'))
++          ->set('register', $form_state->getValue('user_register'))
++          ->set('password_strength', $form_state->getValue('user_password_strength'))
++          ->set('verify_mail', $form_state->getValue('user_email_verification'))
++          ->set('cancel_method', $form_state->getValue('user_cancel_method'))
++          ->set('notify.status_activated', $form_state->getValue('user_mail_status_activated_notify'))
++          ->set('notify.status_blocked', $form_state->getValue('user_mail_status_blocked_notify'))
++          ->set('notify.status_canceled', $form_state->getValue('user_mail_status_canceled_notify'));
++    }
++    return $config;
++  }
+</code></pre>
+        </section>
+        <section data-background="img/user-settings-validation-ui-tada.png" data-background-size="contain">
+        </section>
+        <section data-background-gradient="radial-gradient(pink, purple)">
+          <h2 style="scale: 2">🕺</h2>
+          <p style="position: fixed; bottom: 5vh; left: 0; font-size: 150% "><a href="https://www.drupal.org/project/drupal/issues/3364506">#3364506</a></p>
         </section>
       </section>
       <section>
@@ -480,10 +606,11 @@ class CdnSettingsForm extends ValidatableConfigFormBase {
         <section id="current-status">
           <h2>🙇🏻‍♂️</h2>
           <table class="fragment custom blur">
-            <tr><td>META</td><td><a href="https://www.drupal.org/project/drupal/issues/2164373">#2164373</a><div class="fragment" style="position: absolute; right: -1.5em; top: 2.3em">👀&nbsp;&nbsp;<span style="position: relative; top: .5em">⤵</span><br><img src="img/meta-issue-url.gif"></div></td></tr>
-            <tr><td>Strictness: required values</td><td><a href="https://www.drupal.org/project/drupal/issues/3364109">#3364109</a></td></tr>
-            <tr><td>Strictness: required keys</td><td><a href="https://www.drupal.org/project/drupal/issues/3364108">#3364108</a></td></tr>
+            <tr><td>META</td><td><a href="https://www.drupal.org/project/drupal/issues/2164373">#2164373</a><div class="fragment" style="position: absolute; right: -.5em; top: 2.7em">👀&nbsp;&nbsp;<span style="position: relative; top: .5em">⤵</span><br><img src="img/meta-issue-url.gif"></div></td></tr>
+            <tr><td>Required values</td><td><a href="https://www.drupal.org/project/drupal/issues/3364109">#3364109</a></td></tr>
+            <tr><td>Required keys</td><td><a href="https://www.drupal.org/project/drupal/issues/3364108">#3364108</a></td></tr>
             <tr><td>Validate in tests</td><td><a href="https://www.drupal.org/project/drupal/issues/3361534">#3361534</a></td></tr>
+            <tr><td>Metadata for rich UX</td><td><a href="https://www.drupal.org/project/drupal/issues/2949888">#2949888</a></td></tr>
           </table>
           <blockquote class="fragment custom blur grow">Which config changes have caused outages for YOU? <span style="animation: growingshrinking 2.5s linear infinite; animation-direction: alternate-reverse">🫵</blockquote>
           <aside class="notes">
