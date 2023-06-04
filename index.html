@@ -132,7 +132,7 @@ standalone_url: false
             <p><code>type: uuid</code></p>
             <div class="fragment">
               <p>👆</p>
-              <p>the only validatable config</p>
+              <p>the only validatable config type</p>
             </div>
             <p class="fragment">😱</p>
           </section>
@@ -158,9 +158,14 @@ uuid:
           <section id="config-schema-constraints--plugin">
             <figure>
               <figcaption style="font-size: 70%;">
-                "<code>Uuid</code>" 👈 a <code>@Constraint</code> plugin ID
+                "<code>Uuid</code>" 👉 a <code>@Constraint</code> plugin ID
               </figcaption>
-              <pre><code data-line-numbers="|4-7|14-16" class="language-php" style="line-height: 110%; font-size: 90%">/**
+              <pre><code data-line-numbers="|9-12|14|1-4|19-21" class="language-php" style="line-height: 110%; font-size: 90%">namespace Drupal\Core\Validation\Plugin\Validation\Constraint;
+
+use Symfony\Component\Validator\Constraints\Uuid;
+use Symfony\Component\Validator\Constraints\UuidValidator;
+
+/**
  * Validates a UUID.
  *
  * @Constraint(
@@ -234,7 +239,7 @@ class UuidValidator extends ConstraintValidator {
 4c74-4100-
 b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string</code></td><td>UUID</td><td>👍</td></tr>
               <tr class="fragment" ><div style="position: absolute; transform:rotate(0.75turn); font-size: 40%; top:16em; left: -6em;"><p><code>media.settings</code></p></div><td><small><code>'https://oembed.com/
-                providers.json'</code></small></td><td>uri</td><td><code>string</code></td><td>URL</td><td>👍</td></tr>
+                providers.json'</code></small></td><td><code>uri</code></td><td><code>string</code></td><td>URL</td><td>👍</td></tr>
               <tr class="fragment"><td><small><code>''</code></small></td><td>uri</td><td><code>string</code></td><td style="animation: loading 2.5s linear infinite;">🤪</td><td>🙈</td></tr>
               <tr class="fragment"><th></th><th><em>intent</em></th><th><em>shape</em></th><th><em>semantics</th><th></th></tr>
             </table>
@@ -272,9 +277,38 @@ b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string
               <li>Many validators missing.
               <li>Validators not executed.
             </ul>
+            <aside class="notes">
+              Not all doom and gloom though: kudos to Drupal module developers, because generally speaking modules <em>do</em> work just fine, even in complex integration scenarios. This requires a lot of defensive programming in every line of code that directly or indirectly depends on configuration. Which clearly — generally speaking — is the case for high-quality Drupal modules.
+
+              But … what if those same module developers would have fewer weird edge cases to deal with due to unexpected values in configuration?
           </section>
         </section>
       </section>
+
+      <section>
+        <section id="why" data-background-gradient="radial-gradient(grey, black)" style="text-shadow: -1px 1px 2px #23430C">
+          <h2>Why?</h2>
+          <p>🤷‍♀️</p>
+        </section>
+        <section id="why-blockers">
+          <ul class="blockers">
+            <li class="fragment custom blur">Writing configuration via JSON:API
+            <li class="fragment custom blur">Admin UI improvements <span style="padding-left: 1em; font-size: 70%" class="fragment">🪦 JS Admin UI</span>
+            <li class="fragment custom blur">Reliable <span style="font-size: 90%"><code>config_split</code><span class="fragment">, <code>config_filter</code> …</span></span>
+            <li class="fragment custom blur">Recipes Initiative
+            <li class="fragment custom blur">Automatic Updates Initiative
+            <li class="fragment custom blur">Ambitious site builder experiences
+          </ul>
+          <aside class="notes">
+            There are many capabilities blocked on this.
+
+            It's not just that this blocks writing configuration via JSON:API, which in turn blocked the JS Admin UI initiative which has since stopped. It's also that it is impossible to reuse the same validation logic for the JS admin UI: it literally needs to be re-implemented, which is a big security risk. If we move the current logic out of forms, we benefit multiple times: custom admin UIs (on the server or client) become possible, UIs become simpler to maintain, additional validation (from a contrib or custom module) becomes easy to add, et cetera.
+
+            Talking to Fabian Bircher, maintainer of https://www.drupal.org/project/config_split and https://www.drupal.org/project/config_filter, he said a key problem is to know if a key is required or not. Sometimes when a value is null or the array empty we can omit the key and sometimes not. These are problems that are easily solvable with validation.
+          </aside>
+        </section>
+      </section>
+
       <section>
         <section id="status-core">
           <h3>Drupal Core</h3>
@@ -289,6 +323,9 @@ b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string
           <p>Every test checks schema …</p>
           <p class="fragment custom blur">… but <span class="bad">does not validate!</span></p>
           <small><p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3361534">#3361534</a> 👉 <code>validate()</code> when <code>$strictConfigSchema = TRUE</code></p></small>
+          <aside class="notes">
+            Actually, the <code>'first-uuid'</code> as a UUID example comes from that issue: it's a real example from Drupal core! 😅 It was fixed a few days ago! 🥳
+          </aside>
         </section>
         <section id="status-core--good-one">
           <h3>Good</h3>
@@ -332,29 +369,7 @@ b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string
           </ul>
         </section>
       </section>
-      <section>
-        <section id="why" data-background-gradient="radial-gradient(grey, black)" style="text-shadow: -1px 1px 2px #23430C">
-          <h2>Why?</h2>
-          <p>🤷‍♀️</p>
-        </section>
-        <section id="why-blockers">
-          <ul class="blockers">
-            <li class="fragment custom blur">Writing configuration via JSON:API
-            <li class="fragment custom blur">Admin UI improvements <span style="padding-left: 1em; font-size: 70%" class="fragment">🪦 JS Admin UI</span>
-            <li class="fragment custom blur">Reliable <span style="font-size: 90%"><code>config_split</code><span class="fragment">, <code>config_filter</code> …</span></span>
-            <li class="fragment custom blur">Recipes Initiative
-            <li class="fragment custom blur">Automatic Updates Initiative
-            <li class="fragment custom blur">Ambitious site builder experiences
-          </ul>
-          <aside class="notes">
-            There are many capabilities blocked on this.
 
-            It's not just that this blocks writing configuration via JSON:API, which in turn blocked the JS Admin UI initiative which has since stopped. It's also that it is impossible to reuse the same validation logic for the JS admin UI: it literally needs to be re-implemented, which is a big security risk. If we move the current logic out of forms, we benefit multiple times: custom admin UIs (on the server or client) become possible, UIs become simpler to maintain, additional validation (from a contrib or custom module) becomes easy to add, et cetera.
-
-            Talking to Fabian Bircher, maintainer of https://www.drupal.org/project/config_split and https://www.drupal.org/project/config_filter, he said a key problem is to know if a key is required or not. Sometimes when a value is null or the array empty we can omit the key and sometimes not. These are problems that are easily solvable with validation.
-          </aside>
-        </section>
-      </section>
       <section>
         <section id="config_inspector">
           <h2>Configuration Inspector</h2>
@@ -636,7 +651,7 @@ $ drush config:inspect --filter-keys=user.settings --detail --list-constraints
             <li>Adam Hoenich aka <a href="https://www.drupal.org/u/phenaproxima">@phenaproxima</a> — Acquia</li>
             <li>Ben Mullins aka <a href="https://www.drupal.org/u/bnjmnm">@bnjmnm</a> — Acquia</li>
             <li>Fabian Bircher aka <a href="https://www.drupal.org/u/bircher">@bircher</a> — Nuvole</li>
-            <li>Daniel Whener aka <a href="https://www.drupal.org/u/dawehner">@dawehner</a> <sup>(2018!)</sup></li>
+            <li>Daniel Wehner aka <a href="https://www.drupal.org/u/dawehner">@dawehner</a> <sup>(2018!)</sup></li>
             <li>Alex Pott aka <a href="https://www.drupal.org/u/alexpott">@alexpott</a> <sup>(2018–now!)</sup></li>
           </ul>
         </section>
