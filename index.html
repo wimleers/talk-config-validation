@@ -78,6 +78,36 @@
             </p>
           </div>
         </section>
+
+        <section>
+          <section data-auto-animate id="what-is-this-about-really">
+            <p>What's this about really? 😅</p>
+            <figure class="fragment custom blur">
+              <pre><code class="language-yaml" data-trim>
+icon_base_uri: 'public://media-icons/generic'
+iframe_domain: ''
+oembed_providers_url: 'https://oembed.com/providers.json'
+standalone_url: false
+</code></pre>
+              <figcaption style="font-size: 50%"><code>media.settings.yml</code></figcaption>
+            </figure>
+          </section>
+          <section data-auto-animate id="what-is-this-about-really-really">
+            <p>What's this about really? 😅</p>
+            <figure>
+              <pre><code class="language-yaml" data-trim>
+_core:
+  default_config_hash: PlWtVQXY5oKYZqCMPXh6SPamXagn5BoZqgAI8EY9WsY
+icon_base_uri: 'public://media-icons/generic'
+iframe_domain: ''
+oembed_providers_url: 'https://oembed.com/providers.json'
+standalone_url: false
+</code></pre>
+              <figcaption style="font-size: 50%"><code>media.settings.yml</code> when installed</figcaption>
+            </figure>
+          </section>
+        </section>
+
         <section>
           <section id="history" style="font-size:90%">
             <table>
@@ -91,11 +121,11 @@
             </table>
           </section>
           <section id="history--trend">
-            <p>More structure:</p>
+            <p>Trend: more structure</p>
             <ul>
-              <li class="fragment custom blur">versionable (👋 <a href="https://www.drupal.org/project/variable"><code>variable</code></a> module)
-              <li class="fragment custom blur">translatable (👋 <a href="https://www.drupal.org/project/i18n"><code>i18n</code></a> module)
-              <li class="fragment custom blur">exportable (👋 <a href="https://www.drupal.org/project/i18n"><code>ctools</code></a> exportables)
+              <li class="fragment custom blur">versionable&nbsp;&nbsp;(👋 <a href="https://www.drupal.org/project/variable"><code>variable</code></a> module)
+              <li class="fragment custom blur">translatable&nbsp;(👋 <a href="https://www.drupal.org/project/i18n"><code>i18n</code></a> module)
+              <li class="fragment custom blur">exportable&nbsp;&nbsp;&nbsp;&nbsp;(👋 <a href="https://www.drupal.org/project/i18n"><code>ctools</code></a> exportables)
             </ul>
           </section>
           <section id="history--caveat">
@@ -109,9 +139,13 @@
         </section>
         <section>
           <section id="config-schema-constraints">
+            <h3>Config schema 101</h3>
+            <p>📚</p>
+          </section>
+          <section id="config-schema-constraints--type-definition">
             <h4><code>type: uuid</code></h4>
             <figure>
-              <pre><code class="language-yaml" style="width: max-content; margin: 0 auto; font-size: 120%"># A UUID.
+              <pre><code class="language-yaml" data-trim data-line-numbers="|2|3|4|5-6" style="font-size: 120%"># A UUID.
 uuid:
   type: string
   label: 'UUID'
@@ -126,7 +160,7 @@ uuid:
               <figcaption style="font-size: 70%;">
                 "<code>Uuid</code>" 👈 a <code>@Constraint</code> plugin ID
               </figcaption>
-              <pre><code class="language-php" style="line-height: 110%; font-size: 90%">/**
+              <pre><code data-line-numbers="|4-7|14-16" class="language-php" style="line-height: 110%; font-size: 90%">/**
  * Validates a UUID.
  *
  * @Constraint(
@@ -152,7 +186,7 @@ class UuidConstraint extends Uuid {
               <figcaption style="font-size: 70%;">
                 <code>validatedBy()</code> 👈 a <code>ConstraintValidatorInterface</code> class
               </figcaption>
-              <pre><code class="language-php" style="line-height: 110%; font-size: 90%">namespace Symfony\Component\Validator\Constraints;
+              <pre><code data-line-numbers="|3|5|6-8|9-11|12" class="language-php" style="line-height: 110%; font-size: 90%">namespace Symfony\Component\Validator\Constraints;
 
 class UuidValidator extends ConstraintValidator {
 
@@ -169,6 +203,9 @@ class UuidValidator extends ConstraintValidator {
 }
 </code></pre>
             </figure>
+          </section>
+          <section data-background-gradient="radial-gradient(#283b95, #17b2c3)">
+            <h2>🧑‍🎓🥳</h2>
           </section>
           <section id="config-schema-constraints--before">
             <h4>Before <code>type: uuid</code></h4>
@@ -243,24 +280,24 @@ b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string
           <h3>Drupal Core</h3>
         </section>
         <section id="status-core--ugly">
-          <h3>Core: ugly</h3>
+          <h3>Ugly</h3>
           <p class="fragment custom blur"><span class="bad">&gt;95%</span> of config types not validatable</p>
-          <small><p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3324984">#3324984</a> adds a test that reports this %.</p></small>
+          <small><p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3324984">#3324984</a> 👉 test to track this %</p></small>
         </section>
         <section id="status-core--bad">
-          <h3>Core: bad</h3>
+          <h3>Bad</h3>
           <p>Every test checks schema …</p>
           <p class="fragment custom blur">… but <span class="bad">does not validate!</span></p>
-          <small><p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3361534">#3361534</a> calls <code>::validate()</code> when <code>::$strictConfigSchema = TRUE</code></p></small>
+          <small><p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3361534">#3361534</a> 👉 <code>validate()</code> when <code>$strictConfigSchema = TRUE</code></p></small>
         </section>
         <section id="status-core--good-one">
           <h3>Good</h3>
           <p>More config validatable!</p>
           <ul>
-            <div class="fragment custom blur">
-              <li><code>type: config_dependencies</code>
-              <li><code>block.block.*:plugin</code>
-              <li>CKEditor 5 configuration + every plugin!
+            <div>
+              <li class="fragment custom blur">CKEditor 5 configuration + every plugin!
+              <li class="fragment custom blur"><code>type: config_dependencies</code>
+              <li class="fragment custom blur"><code>block.block.*:plugin</code>
             </div>
             <div class="fragment custom blur">
               <li><a href="https://www.drupal.org/project/drupal/issues/2920678">#2920678</a> 👉 <code>type: machine_name</code>
@@ -275,13 +312,16 @@ b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string
           <h3>Good</h3>
           <p>More validation constraints to reuse!</p>
           <ul>
-            <li class="fragment custom blur"><code>ValidKeys: &lt;infer&gt;</code>
-            <li class="fragment custom blur"><code>PluginExists: plugin.manager.block</code>
-            <li class="fragment custom blur"><code>ExtensionName: []</code>
-            <li class="fragment custom blur"><code>ExtensionExists: module</code>
-            <li class="fragment custom blur"><code>ConfigExists: []</code>
-            <li class="fragment custom blur"><code>RequiredConfigDependencies: ['filter_format']</code>
+            <li class="fragment custom blur"><code>ValidKeys: </code><code class="fragment custom blur">&lt;infer&gt;</code>
+            <li class="fragment custom blur"><code>PluginExists: </code><code class="fragment custom blur">plugin.manager.block</code>
+            <li class="fragment custom blur"><code>ExtensionName: {}</code>
+            <li class="fragment custom blur"><code>ExtensionExists: </code><code class="fragment custom blur">module</code></code>
+            <li class="fragment custom blur"><code>ConfigExists: {}</code>
+            <li class="fragment custom blur"><code>RequiredConfigDependencies: </code><code class="fragment custom blur">['filter_format']</code>
           </ul>
+          <aside class="notes">
+            The most powerful and impactful one was written by phenaproxima and committed to core almost exactly six months ago: the <code>ValidKeys</code> constraint. This constraint accepts a list of&nbsp;…&nbsp;valid keys, unsurprisingly! But what truly makes it powerful is the ability to specify the <code>&lt;infer&gt;</code>
+          </aside>
         </section>
         <section id="status-core--interested">
           <h3>Interested?</h3>
@@ -596,8 +636,8 @@ $ drush config:inspect --filter-keys=user.settings --detail --list-constraints
             <li>Adam Hoenich aka <a href="https://www.drupal.org/u/phenaproxima">@phenaproxima</a> — Acquia</li>
             <li>Ben Mullins aka <a href="https://www.drupal.org/u/bnjmnm">@bnjmnm</a> — Acquia</li>
             <li>Fabian Bircher aka <a href="https://www.drupal.org/u/bircher">@bircher</a> — Nuvole</li>
-            <li>Daniel Whener aka <a href="https://www.drupal.org/u/dawehner">@dawehner</a> — Chapter Three (2018!)</li>
-            <li>Alex Pott aka <a href="https://www.drupal.org/u/alexpott">@alexpott</a> — (2018–now!)</li>
+            <li>Daniel Whener aka <a href="https://www.drupal.org/u/dawehner">@dawehner</a> <sup>(2018!)</sup></li>
+            <li>Alex Pott aka <a href="https://www.drupal.org/u/alexpott">@alexpott</a> <sup>(2018–now!)</sup></li>
           </ul>
         </section>
         <section id="future">
