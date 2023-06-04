@@ -117,7 +117,7 @@ standalone_url: false
               <tr class="fragment"><td><a href="https://www.drupal.org/node/1500260">2012</a></td><td>YAML files</td><td>diffable</td><td>🤓𝍔</td></tr>
               <tr class="fragment"><td><a href="https://www.drupal.org/node/1905120">2013</a></td><td>[…] + schema</td><td>introspectable</td><td>🤔💡</td></tr>
               <tr class="fragment"><td><a href="https://www.drupal.org/node/2241059">2014</a></td><td><code>config</code> table + […]</td><td><em>unchanged</em></td><td>🏎️</td></tr>
-              <tr class="fragment"><td><a href="https://www.drupal.org/node/2870878">2017</a></td><td>[…] + […] + constraints</td><td><em>validatable</em></td><td>✅</td></tr>
+              <tr class="fragment"><td><a href="https://www.drupal.org/node/2870878">2017</a></td><td>[…] + […] + constraints</td><td>validatable</td><td>✅</td></tr>
             </table>
           </section>
           <section id="history--trend">
@@ -142,8 +142,22 @@ standalone_url: false
             <h3>Config schema 101</h3>
             <p>📚</p>
           </section>
+          <section id="config-schema-constraints--type-use">
+            <p><code>type: uuid</code> use</p>
+            <figure>
+              <pre><code class="language-yaml" data-trim data-line-numbers="5" style="font-size: 120%">config_entity:
+  type: mapping
+  mapping:
+    uuid:
+      type: uuid
+      label: 'UUID'
+  …
+</code></pre>
+              <figcaption style="font-size: 50%"><code>core/config/schema/core.data_types.schema.yml</code></figcaption>
+            </figure>
+          </section>
           <section id="config-schema-constraints--type-definition">
-            <h4><code>type: uuid</code></h4>
+            <p><code>type: uuid</code> definition</p>
             <figure>
               <pre><code class="language-yaml" data-trim data-line-numbers="|2|3|4|5-6" style="font-size: 120%"># A UUID.
 uuid:
@@ -354,7 +368,7 @@ b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string
             <li class="fragment custom blur"><code>ExtensionName: {}</code>
             <li class="fragment custom blur"><code>ExtensionExists: </code><code class="fragment custom blur">module</code></code>
             <li class="fragment custom blur"><code>ConfigExists: {}</code>
-            <li class="fragment custom blur"><code>RequiredConfigDependencies: </code><code class="fragment custom blur">['filter_format']</code>
+            <li class="fragment custom blur">…
           </ul>
           <aside class="notes">
             The most powerful and impactful one was written by phenaproxima and committed to core almost exactly six months ago: the <code>ValidKeys</code> constraint. This constraint accepts a list of&nbsp;…&nbsp;valid keys, unsurprisingly! But what truly makes it powerful is the ability to specify the <code>&lt;infer&gt;</code>
@@ -389,7 +403,7 @@ b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string
           <h2>Drupal Contrib</h2>
         </section>
         <section>
-          <p>You <em>can</em> start using it today!
+          <p>You <em>can</em> start using this today!
         </section>
         <section id="cdn">
           <h2>CDN module: since 20<span class="fragment custom blur">1</a><span class="fragment custom blur">9</a> </h2>
@@ -574,7 +588,7 @@ $ drush config:inspect --filter-keys=user.settings --detail --list-constraints
 +       constraints:
 +         NotBlank: []
 +         Regex:
-+           pattern: '/[[:alnum:][:space:]]+/'
++           pattern: '/[[:alnum:]]+/'
 +           message: 'Using only emojis is not allowed because it may not be supported in all contexts.'
           </code></pre>
           <p><code>user.schema.yml</code></p>
