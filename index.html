@@ -123,7 +123,7 @@ standalone_url: false
           <section id="history--trend">
             <p>Trend: more structure</p>
             <ul>
-              <li class="fragment custom blur">versionable&nbsp;&nbsp;(👋 <a href="https://www.drupal.org/project/variable"><code>variable</code></a> module)
+              <li class="fragment custom blur">introspectable&nbsp;&nbsp;(👋 <a href="https://www.drupal.org/project/variable"><code>variable</code></a> module)
               <li class="fragment custom blur">translatable&nbsp;(👋 <a href="https://www.drupal.org/project/i18n"><code>i18n</code></a> module)
               <li class="fragment custom blur">exportable&nbsp;&nbsp;&nbsp;&nbsp;(👋 <a href="https://www.drupal.org/project/i18n"><code>ctools</code></a> exportables)
             </ul>
@@ -153,7 +153,6 @@ standalone_url: false
       label: 'UUID'
   …
 </code></pre>
-              <figcaption style="font-size: 50%"><code>core/config/schema/core.data_types.schema.yml</code></figcaption>
             </figure>
           </section>
           <section id="config-schema-constraints--type-definition">
@@ -174,7 +173,7 @@ uuid:
               <figcaption style="font-size: 70%;">
                 "<code>Uuid</code>" 👉 a <code>@Constraint</code> plugin ID
               </figcaption>
-              <pre><code data-line-numbers="|9-12|14|1-4|19-21" class="language-php" style="line-height: 110%; font-size: 90%">namespace Drupal\Core\Validation\Plugin\Validation\Constraint;
+              <pre><code data-line-numbers="|9-12|14|1-4|19-21|23" class="language-php" style="line-height: 110%; font-size: 90%">namespace Drupal\Core\Validation\Plugin\Validation\Constraint;
 
 use Symfony\Component\Validator\Constraints\Uuid;
 use Symfony\Component\Validator\Constraints\UuidValidator;
@@ -196,15 +195,14 @@ class UuidConstraint extends Uuid {
     return UuidValidator::class;
   }
 
+  public $message = 'This is not a valid UUID.';
+
 }
 </code></pre>
             </figure>
           </section>
           <section id="config-schema-constraints--plugin-validator">
             <figure>
-              <figcaption style="font-size: 70%;">
-                <code>validatedBy()</code> 👈 a <code>ConstraintValidatorInterface</code> class
-              </figcaption>
               <pre><code data-line-numbers="|3|5|6-8|9-11|12" class="language-php" style="line-height: 110%; font-size: 90%">namespace Symfony\Component\Validator\Constraints;
 
 class UuidValidator extends ConstraintValidator {
@@ -330,13 +328,13 @@ b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string
         <section id="status-core--ugly">
           <h3>Ugly</h3>
           <p class="fragment custom blur"><span class="bad">&gt;95%</span> of config types not validatable</p>
-          <small><p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3324984">#3324984</a> 👉 test to track this %</p></small>
+          <p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3324984">#3324984</a> 👉 test to track this %</p>
         </section>
         <section id="status-core--bad">
           <h3>Bad</h3>
           <p>Every test checks schema …</p>
           <p class="fragment custom blur">… but <span class="bad">does not validate!</span></p>
-          <small><p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3361534">#3361534</a> 👉 <code>validate()</code> when <code>$strictConfigSchema = TRUE</code></p></small>
+          <p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3361534">#3361534</a> 👉 <code>validate()</code></p>
           <aside class="notes">
             Actually, the <code>'first-uuid'</code> as a UUID example comes from that issue: it's a real example from Drupal core! 😅 It was fixed a few days ago! 🥳
           </aside>
@@ -534,7 +532,7 @@ class CdnSettingsForm extends ValidatableConfigFormBase {
       </section>
       <section>
         <section id="future-core">
-          <h3>How to use?</h3>
+          <h3>How to adopt?</h3>
           <h4 style="font-size: 200%" class="fragment custom blur">🪩</h4>
         </section>
         <section>
