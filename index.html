@@ -80,35 +80,6 @@
         </section>
 
         <section>
-          <section data-auto-animate id="what-is-this-about-really">
-            <p>What's this about really? 😅</p>
-            <figure class="fragment custom blur">
-              <pre><code class="language-yaml" data-trim>
-icon_base_uri: 'public://media-icons/generic'
-iframe_domain: ''
-oembed_providers_url: 'https://oembed.com/providers.json'
-standalone_url: false
-</code></pre>
-              <figcaption style="font-size: 50%"><code>media.settings.yml</code></figcaption>
-            </figure>
-          </section>
-          <section data-auto-animate id="what-is-this-about-really-really">
-            <p>What's this about really? 😅</p>
-            <figure>
-              <pre><code class="language-yaml" data-trim>
-_core:
-  default_config_hash: PlWtVQXY5oKYZqCMPXh6SPamXagn5BoZqgAI8EY9WsY
-icon_base_uri: 'public://media-icons/generic'
-iframe_domain: ''
-oembed_providers_url: 'https://oembed.com/providers.json'
-standalone_url: false
-</code></pre>
-              <figcaption style="font-size: 50%"><code>media.settings.yml</code> when installed</figcaption>
-            </figure>
-          </section>
-        </section>
-
-        <section>
           <section id="history" style="font-size:90%">
             <table>
               <caption>A brief history of config in Drupal</caption>
@@ -137,6 +108,31 @@ standalone_url: false
             <p class="fragment">😱</p>
           </section>
         </section>
+
+      <section>
+        <section id="why" data-background-gradient="radial-gradient(grey, black)" style="text-shadow: -1px 1px 2px #23430C">
+          <h2>Why?</h2>
+          <p>🤷‍♀️</p>
+        </section>
+        <section id="why-blockers">
+          <ul class="blockers">
+            <li class="fragment custom blur">Writing configuration via JSON:API
+            <li class="fragment custom blur">Admin UI improvements <span style="padding-left: 1em; font-size: 70%" class="fragment">🪦 JS Admin UI</span>
+            <li class="fragment custom blur">Reliable <span style="font-size: 90%"><code>config_split</code><span class="fragment">, <code>config_filter</code> …</span></span>
+            <li class="fragment custom blur">Recipes Initiative
+            <li class="fragment custom blur">Automatic Updates Initiative
+            <li class="fragment custom blur">Ambitious site builder experiences
+          </ul>
+          <aside class="notes">
+            There are many capabilities blocked on this.
+
+            It's not just that this blocks writing configuration via JSON:API, which in turn blocked the JS Admin UI initiative which has since stopped. It's also that it is impossible to reuse the same validation logic for the JS admin UI: it literally needs to be re-implemented, which is a big security risk. If we move the current logic out of forms, we benefit multiple times: custom admin UIs (on the server or client) become possible, UIs become simpler to maintain, additional validation (from a contrib or custom module) becomes easy to add, et cetera.
+
+            Talking to Fabian Bircher, maintainer of https://www.drupal.org/project/config_split and https://www.drupal.org/project/config_filter, he said a key problem is to know if a key is required or not. Sometimes when a value is null or the array empty we can omit the key and sometimes not. These are problems that are easily solvable with validation.
+          </aside>
+        </section>
+      </section>
+
         <section>
           <section id="config-schema-constraints">
             <h3>Config schema 101</h3>
@@ -242,417 +238,43 @@ class UuidValidator extends ConstraintValidator {
             <h2>🤯</h2>
           </section>
         </section>
-        <section>
-          <section id="types-of-types" style="font-size:90%;">
-            <table style="margin: 0;">
-              <tr class="fragment"><th style="border-bottom: none; text-align: center">Data</th><th colspan="3" style="text-align: center">Types</th></tr>
-              <tr class="fragment"><th></th><th>Config</th><th>Storage</th><th>Perceived</th><th></th></tr>
-              <tr class="fragment"><td><small><code>'f962b8c7-
-4c74-4100-
-b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string</code></td><td>UUID</td><td>👍</td></tr>
-              <tr class="fragment" ><div style="position: absolute; transform:rotate(0.75turn); font-size: 40%; top:16em; left: -6em;"><p><code>media.settings</code></p></div><td><small><code>'https://oembed.com/
-                providers.json'</code></small></td><td><code>uri</code></td><td><code>string</code></td><td>URL</td><td>👍</td></tr>
-              <tr class="fragment"><td><small><code>''</code></small></td><td>uri</td><td><code>string</code></td><td style="animation: loading 2.5s linear infinite;">🤪</td><td>🙈</td></tr>
-              <tr class="fragment"><th></th><th><em>intent</em></th><th><em>shape</em></th><th><em>semantics</th><th></th></tr>
-            </table>
-            <aside class="notes">
-              The theoretical implications of choosing a particular type that we really want for practical reasons (assuming some input contains some kind of data) is unfortunately completely missing in practice, making the usefuless theoretical 🙃
-            </aside>
-          </section>
-          <section>
-            <p>Validators needed! 🙏</p>
-          </section>
-          <section>
-            <p>It gets worse.</p>
-          </section>
-          <section id="types-of-types-worse" style="font-size:90%;">
-            <table style="margin: 0;">
-              <tr class=""><th style="border-bottom: none; text-align: center">Data</th><th colspan="3" style="text-align: center">Types</th></tr>
-              <tr class=""><th></th><th>Config</th><th>Storage</th><th>Perceived</th><th></th></tr>
-              <tr class=""><td><small><code>'f962b8c7-
-4c74-4100-
-b6de-08e6a65ff43d'</code></small></td><td><code>uuid</code></td><td><code>string</code></td><td>UUID</td><td>👍</td></tr>
-              <tr class=""><div style="position: absolute; transform:rotate(0.75turn); font-size: 40%; top:16em; left: -6em;"><p><code>media.settings</code></p></div><td><small><code>'https://oembed.com/
-                providers.json'</code></small></td><td>uri</td><td><code>string</code></td><td>URL</td><td>👍</td></tr>
-              <tr class="fra"><td><small><code>''</code></small></td><td>uri</td><td><code>string</code></td><td>🤪</td><td>🙈</td></tr>
-              <tr class="fragment"><td><small><code>'first-uuid'</code></small></td><td><code>uuid</code></td><td><code>string</code></td><td>🤪</td><td class="fragment grow" style="animation: growingshrinking 2.5s linear infinite; animation-direction: alternate-reverse">😱</td></tr>
-            </table>
-          </section>
-          <section>
-            <p>Validators are not executed today.</p>
-          </section>
-          <section id="types-this-aint-fine" data-background-video="img/thisisfine.mp4"></section>
-          <section data-background-gradient="radial-gradient(yellow, orange)" style="text-shadow: -1px 1px 2px #23430C">
-            <h3>The new blobbiness</h3>
-            <p>🫠</p>
-            <ul>
-              <li>Many validators missing.
-              <li>Validators not executed.
-            </ul>
-            <aside class="notes">
-              Not all doom and gloom though: kudos to Drupal module developers, because generally speaking modules <em>do</em> work just fine, even in complex integration scenarios. This requires a lot of defensive programming in every line of code that directly or indirectly depends on configuration. Which clearly — generally speaking — is the case for high-quality Drupal modules.
-
-              But … what if those same module developers would have fewer weird edge cases to deal with due to unexpected values in configuration?
-          </section>
-        </section>
-      </section>
-
-      <section>
-        <section id="why" data-background-gradient="radial-gradient(grey, black)" style="text-shadow: -1px 1px 2px #23430C">
-          <h2>Why?</h2>
-          <p>🤷‍♀️</p>
-        </section>
-        <section id="why-blockers">
-          <ul class="blockers">
-            <li class="fragment custom blur">Writing configuration via JSON:API
-            <li class="fragment custom blur">Admin UI improvements <span style="padding-left: 1em; font-size: 70%" class="fragment">🪦 JS Admin UI</span>
-            <li class="fragment custom blur">Reliable <span style="font-size: 90%"><code>config_split</code><span class="fragment">, <code>config_filter</code> …</span></span>
-            <li class="fragment custom blur">Recipes Initiative
-            <li class="fragment custom blur">Automatic Updates Initiative
-            <li class="fragment custom blur">Ambitious site builder experiences
-          </ul>
-          <aside class="notes">
-            There are many capabilities blocked on this.
-
-            It's not just that this blocks writing configuration via JSON:API, which in turn blocked the JS Admin UI initiative which has since stopped. It's also that it is impossible to reuse the same validation logic for the JS admin UI: it literally needs to be re-implemented, which is a big security risk. If we move the current logic out of forms, we benefit multiple times: custom admin UIs (on the server or client) become possible, UIs become simpler to maintain, additional validation (from a contrib or custom module) becomes easy to add, et cetera.
-
-            Talking to Fabian Bircher, maintainer of https://www.drupal.org/project/config_split and https://www.drupal.org/project/config_filter, he said a key problem is to know if a key is required or not. Sometimes when a value is null or the array empty we can omit the key and sometimes not. These are problems that are easily solvable with validation.
-          </aside>
-        </section>
-      </section>
-
-      <section>
-        <section id="status-core">
-          <h3>Drupal Core</h3>
-        </section>
-        <section id="status-core--ugly">
-          <h3>Ugly</h3>
-          <p class="fragment custom blur"><span class="bad">&gt;95%</span> of config types not validatable</p>
-          <p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3324984">#3324984</a> 👉 test to track this %</p>
-        </section>
-        <section id="status-core--bad">
-          <h3>Bad</h3>
-          <p>Every test checks schema …</p>
-          <p class="fragment custom blur">… but <span class="bad">does not validate!</span></p>
-          <p class="fragment custom blur"><a href="https://www.drupal.org/project/drupal/issues/3361534">#3361534</a> 👉 <code>validate()</code></p>
-          <aside class="notes">
-            Actually, the <code>'first-uuid'</code> as a UUID example comes from that issue: it's a real example from Drupal core! 😅 It was fixed a few days ago! 🥳
-          </aside>
-        </section>
-        <section id="status-core--good-one">
-          <h3>Good</h3>
-          <p>More config validatable!</p>
-          <ul>
-            <div>
-              <li class="fragment custom blur">CKEditor 5 configuration + every plugin!
-              <li class="fragment custom blur"><code>type: config_dependencies</code>
-              <li class="fragment custom blur"><code>block.block.*:plugin</code>
-            </div>
-            <div class="fragment custom blur">
-              <li><a href="https://www.drupal.org/project/drupal/issues/2920678">#2920678</a> 👉 <code>type: machine_name</code>
-              <li><a href="https://www.drupal.org/project/drupal/issues/3341682">#3341682</a> 👉 <code>type: label</code>
-            </div>
-          </ul>
-          <aside class="notes">
-            So what else besides <code>type: uuid</code> is supported?
-          </aside>
-        </section>
-        <section id="status-core--good-two">
-          <h3>Good</h3>
-          <p>More validation constraints to reuse!</p>
-          <ul>
-            <li class="fragment custom blur"><code>ValidKeys: </code><code class="fragment custom blur">&lt;infer&gt;</code>
-            <li class="fragment custom blur"><code>PluginExists: </code><code class="fragment custom blur">plugin.manager.block</code>
-            <li class="fragment custom blur"><code>ExtensionName: {}</code>
-            <li class="fragment custom blur"><code>ExtensionExists: </code><code class="fragment custom blur">module</code></code>
-            <li class="fragment custom blur"><code>ConfigExists: {}</code>
-            <li class="fragment custom blur">…
-          </ul>
-          <aside class="notes">
-            The most powerful and impactful one was written by phenaproxima and committed to core almost exactly six months ago: the <code>ValidKeys</code> constraint. This constraint accepts a list of&nbsp;…&nbsp;valid keys, unsurprisingly! But what truly makes it powerful is the ability to specify the <code>&lt;infer&gt;</code>
-          </aside>
-        </section>
-        <section id="status-core--interested">
-          <h3>Interested?</h3>
-          <p>Issue tags:</p>
-          <ul>
-            <li><a href="https://www.drupal.org/project/issues/search?issue_tags=Configuration%20schema"><q>Configuration schema</q></a>
-            <li><a href="https://www.drupal.org/project/issues/search?issue_tags=validation"><q>validation</q></a>
-          </ul>
-        </section>
       </section>
 
       <section>
         <section id="config_inspector">
-          <h2>Configuration Inspector</h2>
+          <h2>Live demo #1</h2>
           <a href="https://www.drupal.org/project/config_inspector">d.o/project/config_inspector</a>
-          <p class="fragment custom blur">Since 2.1.1</p>
         </section>
+        <section data-background="img/config_inspector_drush.png" data-background-size=contain></section>
+        <section data-background="img/config_inspector_drush2.png" data-background-size=contain></section>
         <section>
-          <video controls src="img/config_inspector.mov"></video>
-        </section>
-        <section data-background="img/config_inspector_ui.png" data-background-size=contain></section>
-        <section>
-          <img src="img/config_inspector_drush.png"></img>
+          <pre><code class="hljs sh">drush config:inspect</code></pre>
+          <pre><code class="hljs sh">drush config:inspect --todo</code></pre>
+          <pre><code class="hljs sh">drush config:inspect --filter-keys=node.type.article \
+                     --detail \
+                     --list-constraints</code></pre>
         </section>
       </section>
       <section>
-        <section id="status-contrib">
-          <h2>Drupal Contrib</h2>
+        <section id="form">
+          <h2>Live demo #2</h2>
+          <p>Validation constraints in forms</p>
         </section>
-        <section>
-          <p>You <em>can</em> start using this today!
-        </section>
-        <section id="cdn">
-          <h2>CDN module: since 20<span class="fragment custom blur">1</a><span class="fragment custom blur">9</a> </h2>
-        </section>
-        <section data-auto-animate>
-          <pre data-id="code-animation"><code class="hljs php" data-trim data-line-numbers="|1|3-5|7-16|18-29|39-41"><script type="text/template">
-class CdnSettingsForm extends ConfigFormBase {
-
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    // …
-  }
-
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    $mapping = $form_state->getValue('mapping');
-    if ($mapping['type'] === 'simple') {
-      if (!CdnSettings::isValidCdnDomain($mapping['simple']['domain'])) {
-        $form_state->setErrorByName('mapping][simple][domain', $this->t('The provided domain %domain is not valid. Provide a hostname like <samp>cdn.com</samp> or <samp>cdn.example.com</samp>. IP addresses and ports are also allowed.', [
-          '%domain' => $mapping['simple']['domain'],
-        ]));
-      }
-    }
-  }
-
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('cdn.settings');
-
-    // Vertical tab: 'Status'.
-    $config->set('status', (bool) $form_state->getValue('status'));
-
-    // Vertical tab: 'Stream wrappers'.
-    $stream_wrappers = array_values(array_filter($form_state->getValue([
-      'wrappers',
-      'stream_wrappers',
-    ])));
-    $config->set('stream_wrappers', $stream_wrappers);
-
-    // …
-
-    // Vertical tab: 'Forever cacheable files'.
-    $config->set('farfuture.status', (bool) $form_state->getValue([
-      'farfuture',
-      'status',
-    ]));
-
-    $config->save();
-
-    parent::submitForm($form, $form_state);
-  }
-
-}
-          </script></code></pre>
-        </section>
-        <section data-auto-animate>
-          <pre data-id="code-animation"><code class="hljs php" data-trim data-line-numbers="|1|7|8-18|26|29-37"><script type="text/template">
-class CdnSettingsForm extends ValidatableConfigFormBase {
-
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    // …
-  }
-
-  protected static function mapFormValuesToConfig(FormStateInterface $form_state, Config $config) {
-    // Vertical tab: 'Status'.
-    $config->set('status', (bool) $form_state->getValue('status'));
-
-    // Vertical tab: 'Stream wrappers'.
-    $stream_wrappers = array_values(array_filter($form_state->getValue([
-      'wrappers',
-      'stream_wrappers',
-    ])));
-    $config->set('stream_wrappers', $stream_wrappers);
-
-    // …
-
-    // Vertical tab: 'Forever cacheable files'.
-    $config->set('farfuture.status', (bool) $form_state->getValue([
-      'farfuture',
-      'status',
-    ]));
-
-    return $config;
-  }
-
-  protected static function mapViolationPropertyPathsToFormNames($property_path) {
-    switch ($property_path) {
-      case 'mapping.domain':
-        return 'mapping][simple][domain';
-
-      default:
-        return parent::mapViolationPropertyPathsToFormNames($property_path);
-    }
-  }
-
-}
-          </script></code></pre>
-        </section>
-        <section data-background="img/cdn_ui-config_validation-2018.png" data-background-size=contain></section>
         <section data-auto-animate>
           <ol>
-            <li class="fragment custom blur">Copy <code>ValidatableConfigFormBase</code> <small>which extends <code>\Drupal\Core\Form\ConfigFormBase</code></small>
-            <li class="fragment custom blur">Subclass <code>ValidatableConfigFormBase</code> <small>instead of <code>ConfigFormBase</code></small>
+            <li class="fragment custom blur">Implement <code>ConfigFormBase</code>'s optional methods <small>since Drupal 10.2: <a href="https://www.drupal.org/node/3373502">#3373502</a></small>
             <li class="fragment custom blur">💰🌈</li>
           </li>
           </ol>
         </section>
         <section data-auto-animate>
           <ol>
-            <li class="fragment custom blur">Copy <code>ValidatableConfigFormBase</code> <small>which extends <code>\Drupal\Core\Form\ConfigFormBase</code></small>
-            <li class="fragment custom blur">Subclass <code>ValidatableConfigFormBase</code> <small>instead of <code>ConfigFormBase</code></small>
+            <li class="fragment custom blur">Implement <code>ConfigFormBase</code>'s optional methods <small>since Drupal 10.2: <a href="https://www.drupal.org/node/3373502">#3373502</a></small>
             <li class="fragment custom blur">💰🌈</li>
             <li class="fragment custom blur">Optional: <code>ConfigEvents::SAVE</code> subscriber <small>to validate <em>your</em> config</small>
             <li class="fragment custom blur">🥳🥇
           </li>
           </ol>
-        </section>
-        <section data-auto-animate data-background="img/cdn_ui-config_validation-2018.png" data-background-size="contain"></section>
-        <section data-auto-animate data-background="img/cdn-ui-config-validation-import.png" data-background-size=contain></section>
-        <section>
-          <h3>Examples</h3>
-          <ul>
-            <li>Search for <q><code>constraints</code></q>
-            <li>in <code>*.schema.yml</code> files
-          </ul>
-          <figure>
-            <figcaption>👇<figcaption>
-            <a href="http://grep.xnddx.ru/search?text=constraints&filename=.schema.yml"><img src="img/examples-url.gif"></a>
-          </figure>
-        </section>
-      </section>
-      <section>
-        <section id="future-core">
-          <h3>How to adopt?</h3>
-          <h4 style="font-size: 200%" class="fragment custom blur">🪩</h4>
-        </section>
-        <section>
-          <p>Analyze your entire site</p>
-          <pre><code data-trim class="language-bash">drush config:inspect --format=csv > ~/Desktop/core.csv</code></pre>
-        </section>
-        <section data-background-video="img/find-next-target.mov" data-background-size=contain>
-        </section>
-        <section data-auto-animate>
-          <pre data-id="code-animation"><code data-trim class="language-text" style="font-size: 80%">
-$ drush config:inspect --filter-keys=user.settings --detail --list-constraints
- Legend for Data:
-  ✅❓  → Correct primitive type, detailed validation impossible.
-  ✅✅  → Correct primitive type, passed all validation constraints.
- ------------------------------------------ --------- ------------- ------ ---------------------------------
-  Key                                        Status    Validatable   Data   Validation constraints
- ------------------------------------------ --------- ------------- ------ ---------------------------------
-  user.settings                              Correct   74%           ✅❓
-   user.settings:                            Correct   NOT           ✅❓
-   user.settings:_core                       Correct   NOT           ✅❓
-   user.settings:_core.default_config_hash   Correct   NOT           ✅❓
-   user.settings:anonymous                   Correct   NOT           ✅❓
-   user.settings:cancel_method               Correct   NOT           ✅❓
-   user.settings:langcode                    Correct   NOT           ✅❓
-   user.settings:notify                      Correct   NOT           ✅❓
-   user.settings:notify.cancel_confirm       Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
-   user.settings:notify.password_reset       Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
-…
-   user.settings:notify.status_activated     Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
-   user.settings:notify.status_blocked       Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
-   user.settings:notify.status_canceled      Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
-   user.settings:password_reset_timeout      Correct   NOT           ✅❓
-   user.settings:password_strength           Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
-   user.settings:register                    Correct   NOT           ✅❓
-   user.settings:verify_mail                 Correct   Validatable   ✅✅   ↣ PrimitiveType: {  }
- ------------------------------------------ --------- ------------- ------ ------------------------
-          </code></pre>
-          <aside class="notes">
-            Using the <code>drush</code> command to list the constraints of all property paths inside <code>user.settings</code> gives us a nice overview of the property paths still missing validation. Some already have validation, but only by accident: because they're <code>type: boolean</code>. Let's start with the first: <code>user.settings:anonymous</code>.
-          </aside>
-        </section>
-        <section data-auto-animate>
-          <pre data-id="code-animation"><code class="language-yaml" data-trim style="font-size: 80%">
-  user.settings:
-    type: config_object
-    label: 'User settings'
-    mapping:
-      anonymous:
-        type: label
-        label: 'Name'
-+       constraints:
-+         NotBlank: []
-+         Regex:
-+           pattern: '/[[:alnum:]]+/'
-+           message: 'Using only emojis is not allowed because it may not be supported in all contexts.'
-          </code></pre>
-          <p><code>user.schema.yml</code></p>
-          <aside class="notes">
-            Because there is no validation logic in the form (which implies that pretty much any value was allowed until now, or at least any value that the HTML form input would have allowed to pass through), we have to use common sense to determine what <em>are</em> acceptable values.
-
-            In this case, we know that pretty much anything goes, except for no input at all (which an <code><input type=text></code> maps to the empty string). So we use <code>NotBlank</code>. But is that enough?
-            Another reasonable requirement is to ensure that the name for the anonymous user works in all contexts. Not all contexts allow for the use of emojis. So, let's require the bare minimum: at least <em>some</em> of the characters must not be emojis, so that even after transliteration, there's something meaningful left.
-          </aside>
-        </section>
-        <section data-background="img/find-next-target-form-step1.png" data-background-size="contain">
-          <aside class="notes">
-            Next, let's find out which UI actually modifies this config. A quick search for <code>user.settings</code> reveals a LOT of matches. But … we know <code>ConfigFormBase</code> has a <code>getEditableConfigNames()</code> method. Let's use that to our advantage, and maybe this is a cool PHPStorm trick you didn't know yet! 🤓
-          </aside>
-        </section>
-        <section data-background="img/find-next-target-form-step2.png" data-background-size="contain">
-        </section>
-        <section data-auto-animate>
-          <pre data-id="code-animation"><code class="language-diff" data-trim style="font-size: 80%">
--class AccountSettingsForm extends ConfigFormBase {
-+class AccountSettingsForm extends ValidatableConfigFormBase {
-          </code></pre>
-        </section>
-        <section data-auto-animate>
-          <pre data-id="code-animation"><code class="language-diff" data-trim style="font-size: 80%">
-   public function submitForm(array &$form, FormStateInterface $form_state) {
-     parent::submitForm($form, $form_state);
-
--    $this->config('user.settings')
--      ->set('anonymous', $form_state->getValue('anonymous'))
--      ->set('register', $form_state->getValue('user_register'))
--      ->set('password_strength', $form_state->getValue('user_password_strength'))
--      ->set('verify_mail', $form_state->getValue('user_email_verification'))
--      ->set('cancel_method', $form_state->getValue('user_cancel_method'))
--      ->set('notify.status_activated', $form_state->getValue('user_mail_status_activated_notify'))
--      ->set('notify.status_blocked', $form_state->getValue('user_mail_status_blocked_notify'))
--      ->set('notify.status_canceled', $form_state->getValue('user_mail_status_canceled_notify'))
--      ->save();
-</code></pre>
-        </section>
-        <section data-auto-animate>
-          <pre data-id="code-animation"><code class="language-diff" data-trim style="font-size: 80%">
-+  /**
-+   * {@inheritdoc}
-+   */
-+  protected static function mapFormValuesToConfig(FormStateInterface $form_state, Config $config): Config {
-+    switch ($config->getName()) {
-+      case 'user.settings':
-+        $config->set('anonymous', $form_state->getValue('anonymous'))
-+          ->set('register', $form_state->getValue('user_register'))
-+          ->set('password_strength', $form_state->getValue('user_password_strength'))
-+          ->set('verify_mail', $form_state->getValue('user_email_verification'))
-+          ->set('cancel_method', $form_state->getValue('user_cancel_method'))
-+          ->set('notify.status_activated', $form_state->getValue('user_mail_status_activated_notify'))
-+          ->set('notify.status_blocked', $form_state->getValue('user_mail_status_blocked_notify'))
-+          ->set('notify.status_canceled', $form_state->getValue('user_mail_status_canceled_notify'));
-+    }
-+    return $config;
-+  }
-</code></pre>
-        </section>
-        <section data-background="img/user-settings-validation-ui-tada.png" data-background-size="contain">
-        </section>
-        <section data-background-gradient="radial-gradient(pink, purple)">
-          <h2 style="scale: 2">🕺</h2>
-          <p style="position: fixed; bottom: 5vh; left: 0; font-size: 150% "><a href="https://www.drupal.org/project/drupal/issues/3364506">#3364506</a></p>
         </section>
       </section>
       <section>
@@ -667,21 +289,13 @@ $ drush config:inspect --filter-keys=user.settings --detail --list-constraints
             <li>Alex Pott aka <a href="https://www.drupal.org/u/alexpott">@alexpott</a> <sup>(2018–now!)</sup></li>
           </ul>
         </section>
-        <section id="future">
-          <h2>🚀</h3>
-          <ul>
-            <li class="fragment custom blur">Challenge: partially validatable
-            <li class="fragment custom blur">Functionality: JS admin UI, JSON:API, recipes
-            <li class="fragment custom blur">Operational: reliability (CI!), module maintainability
-          </ul>
-        </section>
         <section id="current-status">
           <h2>🙇🏻‍♂️</h2>
           <table class="fragment custom blur">
             <tr><td>META</td><td><a href="https://www.drupal.org/project/drupal/issues/2164373">#2164373</a><div class="fragment" style="position: absolute; right: -.5em; top: 2.7em">👀&nbsp;&nbsp;<span style="position: relative; top: .5em">⤵</span><br><img src="img/meta-issue-url.gif"></div></td></tr>
-            <tr><td>Required values</td><td><a href="https://www.drupal.org/project/drupal/issues/3364109">#3364109</a></td></tr>
-            <tr><td>Required keys</td><td><a href="https://www.drupal.org/project/drupal/issues/3364108">#3364108</a></td></tr>
-            <tr><td>Validate in tests</td><td><a href="https://www.drupal.org/project/drupal/issues/3361534">#3361534</a></td></tr>
+            <tr><td>🟢 Required values</td><td><a href="https://www.drupal.org/project/drupal/issues/3364109">#3364109</a></td></tr>
+            <tr><td>🟡 Required keys</td><td><a href="https://www.drupal.org/project/drupal/issues/3364108">#3364108</a></td></tr>
+            <tr><td>🚢 <del>Validate in tests</del></td><td><a href="https://www.drupal.org/project/drupal/issues/3361534">#3361534</a></td></tr>
             <tr><td>Metadata for rich UX</td><td><a href="https://www.drupal.org/project/drupal/issues/2949888">#2949888</a></td></tr>
           </table>
           <blockquote class="fragment custom blur grow">Which config changes have caused outages for YOU? <span style="animation: growingshrinking 2.5s linear infinite; animation-direction: alternate-reverse">🫵</blockquote>
